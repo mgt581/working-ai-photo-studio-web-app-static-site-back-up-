@@ -23,6 +23,10 @@
     .btn-outline { background: white; color: #374151; border: 1px solid #d1d5db; }
     .btn-outline:hover { background: #f3f4f6; }
 
+    /* Delete Button Styling */
+    .btn-delete { background-color: #ef4444; color: white; }
+    .btn-delete:hover { background-color: #dc2626; }
+
     .grid {
       display:grid;
       grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
@@ -41,7 +45,7 @@
     }
     
     .actions { display:flex; gap:4px; }
-    .btn-sm { flex:1; padding:6px; font-size:12px; text-align:center; }
+    .btn-sm { flex:1; padding:6px; font-size:11px; text-align:center; border-radius: 6px; }
 
     #status { text-align:center; color:#6b7280; margin-top:40px; }
   </style>
@@ -76,6 +80,7 @@
 
     const auth = firebase.auth();
     const db = firebase.firestore();
+    const storage = firebase.storage();
 
     auth.onAuthStateChanged(user => {
       if (!user) {
@@ -89,7 +94,6 @@
       const galleryDiv = document.getElementById("gallery");
       const status = document.getElementById("status");
 
-      // Listen to the user's gallery collection
       db.collection("users")
         .doc(uid)
         .collection("gallery")
@@ -97,11 +101,12 @@
         .onSnapshot(snap => {
           if (snap.empty) {
             status.textContent = "No images found. Go create some!";
+            status.style.display = 'block';
             galleryDiv.innerHTML = "";
             return;
           }
 
-          status.style.display = 'none'; // Hide loading text
+          status.style.display = 'none';
           galleryDiv.innerHTML = "";
 
           snap.forEach(doc => {
@@ -111,31 +116,57 @@
             const card = document.createElement("div");
             card.className = "card";
             
-            // Image
             const img = document.createElement("img");
             img.src = data.url;
             img.loading = "lazy";
             
-            // Download Button
-            const btn = document.createElement("a");
-            btn.className = "btn btn-sm";
-            btn.textContent = "Download";
-            btn.href = data.url;
-            btn.target = "_blank"; // Opens in new tab
-            btn.download = "my-ai-photo.png";
+            const actions = document.createElement("div");
+            actions.className = "actions";
+
+            // Download Link
+            const dlBtn = document.createElement("a");
+            dlBtn.className = "btn btn-sm btn-outline";
+            dlBtn.textContent = "Save";
+            dlBtn.href = data.url;
+            dlBtn.target = "_blank";
+            dlBtn.download = "ai-photo.png";
+
+            // Delete Button
+            const delBtn = document.createElement("button");
+            delBtn.className = "btn btn-sm btn-delete";
+            delBtn.textContent = "Delete";
+            // Passing the user ID, the Document ID, and the Storage URL
+            delBtn.onclick = () => deleteImage(uid, doc.id, data.url);
+
+            actions.appendChild(dlBtn);
+            actions.appendChild(delBtn);
 
             card.appendChild(img);
-            card.appendChild(btn);
+            card.appendChild(actions);
             galleryDiv.appendChild(card);
           });
         }, error => {
           console.error("Gallery error:", error);
-          if (error.code === 'permission-denied') {
-             status.textContent = "Permission error: Please update Firestore Rules in Console.";
-          } else {
-             status.textContent = "Error loading images.";
-          }
+          status.textContent = "Error loading images.";
         });
+    }
+
+    async function deleteImage(uid, docId, photoUrl) {
+      if (!confirm("Are you sure you want to delete this photo permanently?")) return;
+
+      try {
+        // 1. Delete the record from Firestore
+        await db.collection("users").doc(uid).collection("gallery").doc(docId).delete();
+
+        // 2. Delete the actual file from Firebase Storage
+        const fileRef = storage.refFromURL(photoUrl);
+        await fileRef.delete();
+
+        // Note: UI updates automatically because of .onSnapshot()
+      } catch (error) {
+        console.error("Error deleting:", error);
+        alert("Failed to delete. Check if your Firebase Storage Rules allow deletion.");
+      }
     }
   </script>
 
