@@ -14,65 +14,68 @@
   <script src="https://cdn.jsdelivr.net/npm/@imgly/background-removal@latest/dist/background-removal.min.js"></script>
 
   <style>
-    :root{--grad:linear-gradient(90deg,#6366f1,#8b5cf6)}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#f9fafb;color:#111827}
-    
-    /* Header & Nav */
-    header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid #e5e7eb;background:#fff}
-    .brand{display:flex;align-items:center;gap:10px}
-    .brand-img{width:28px;height:28px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-    .brand-text{font-size:20px;font-weight:800;letter-spacing:.2px}
-    .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .ghost{background:#eef2ff;color:#4338ca;border:0;padding:8px 12px;border-radius:10px;font-weight:700;text-decoration:none;display:inline-block;cursor:pointer;font-size:14px}
-    .muted{color:#6b7280;font-size:13px}
-    
-    /* Pricing Buttons */
-    .pricing-row { display: flex; gap: 8px; align-items: center; }
-    .btn-price { padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 700; color: white; transition: transform 0.1s; white-space: nowrap; }
-    .btn-price:active { transform: scale(0.97); }
-    
-    /* Responsive header */
-    @media (max-width: 768px) {
-      header { flex-direction: column; align-items: stretch; }
-      .pricing-row { justify-content: center; flex-wrap: wrap; }
-    }
-    @media (min-width: 769px) {
-      header { gap: 16px; }
-      .pricing-row { margin-left: auto; }
-    }
-    
-    /* Layout */
-    .wrap{max-width:900px;margin:0 auto;padding:24px;display:grid;gap:16px}
-    .card{background:#fff;padding:20px;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
-    .btn{height:44px;padding:0 16px;border-radius:10px;border:0;cursor:pointer;font-size:15px;font-weight:700;background:#e5e7eb;color:#111827}
-    .btn.primary{background:var(--grad);color:#fff}
-    .btn.warn{background:#fee2e2;color:#991b1b}
-    .btn:disabled{opacity:.65;cursor:not-allowed}
+  :root{--grad:linear-gradient(90deg,#6366f1,#8b5cf6)}
+  body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:#f9fafb;color:#111827}
+  
+  /* Header & Nav */
+  header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid #e5e7eb;background:#fff}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand-img{width:28px;height:28px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+  .brand-text{font-size:20px;font-weight:800;letter-spacing:.2px}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ghost{background:#eef2ff;color:#4338ca;border:0;padding:8px 12px;border-radius:10px;font-weight:700;text-decoration:none;display:inline-block;cursor:pointer;font-size:14px}
+  .muted{color:#6b7280;font-size:13px}
+  
+  /* Pricing Buttons */
+  .pricing-row { display: flex; gap: 8px; align-items: center; }
+  .btn-price { padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 700; color: white; transition: transform 0.1s; white-space: nowrap; }
+  .btn-price:active { transform: scale(0.97); }
+  
+  /* Responsive header */
+  @media (max-width: 768px) {
+    header { flex-direction: column; align-items: stretch; }
+    .pricing-row { justify-content: center; flex-wrap: wrap; }
+  }
+  @media (min-width: 769px) {
+    header { gap: 16px; }
+    .pricing-row { margin-left: auto; }
+  }
+  
+  /* Layout */
+  .wrap{max-width:900px;margin:0 auto;padding:24px;display:grid;gap:16px}
+  .card{background:#fff;padding:20px;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+  .btn{height:44px;padding:0 16px;border-radius:10px;border:0;cursor:pointer;font-size:15px;font-weight:700;background:#e5e7eb;color:#111827}
+  .btn.primary{background:var(--grad);color:#fff}
+  .btn.warn{background:#fee2e2;color:#991b1b}
+  .btn:disabled{opacity:.65;cursor:not-allowed}
 
-    /* BETA TAG STYLE */
-    .tag-beta {
-      background: #f59e0b; /* Orange */
-      color: white;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      margin-left: 6px;
-      text-transform: uppercase;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-      vertical-align: middle;
-    }
-    
-    /* Canvas */
-    .stage{border:1px solid #e5e7eb;border-radius:12px;overflow:hidden;position:relative}
-    canvas#stage{width:100%;height:auto;display:block;background:#f3f4f6}
-    canvas#mask{position:absolute;left:0;top:0;width:100%;height:100%;display:none;cursor:crosshair}
-    
-    .actions{display:grid;gap:12px}
-    .hint{font-size:13px;color:#6b7280;text-align:center}
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;background:#111827;color:#fff;padding:10px 14px;border-radius:10px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:9999}
-    .toolbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-  </style>
+  /* BETA TAG STYLE */
+  .tag-beta {
+    background: #f59e0b;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+  }
+
+  /* ============================= */
+  /* MVP MODE – PAYMENTS DISABLED  */
+  /* ============================= */
+
+  /* Hide pricing buttons completely */
+  .pricing-row,
+  #btnDaily,
+  #btnMonthly,
+  #btnTrialStart {
+    display: none !important;
+  }
+
+</style>
 </head>
 <body>
   <header>
