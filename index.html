@@ -84,13 +84,9 @@
     <div class="row" style="flex: 1; justify-content: flex-end;">
       <a href="gallery.html" class="ghost">Gallery</a>
       <a href="settings.html" class="ghost">Settings</a>
-      
-      <a href="signin.html" class="ghost" id="navSignIn">Sign In</a>
-      <a href="signup.html" class="ghost" id="navSignUp">Sign Up</a>
-      
+            
       <span id="authStatus" class="muted" style="display:none"></span>
       <span id="userStatusBadge" style="display:none; padding: 6px 12px; border-radius: 8px; font-weight: 700; font-size: 13px;"></span>
-      <button id="btnLogout" class="ghost" style="display:none; background:#fee2e2; color:#991b1b;">Sign out</button>
       
       <div class="pricing-row">
         <button id="btnDaily" class="btn-price" style="background: #6b7280;">Day Pass £1</button>
@@ -214,9 +210,7 @@
 
     // 3. APP VARIABLES & DOM
     const elStatus    = document.getElementById('authStatus');
-    const btnLogout   = document.getElementById('btnLogout');
-    const navSignIn   = document.getElementById('navSignIn');
-    const navSignUp   = document.getElementById('navSignUp');
+ 
     window.proEnabled = false;
 
     const $status = document.getElementById('status');
@@ -459,9 +453,7 @@ const loadImage = (src) => new Promise((res, rej) => {
       const who = user.email || (user.isAnonymous ? 'Guest' : 'User');
       elStatus.style.display = 'inline-block';
       elStatus.textContent = `Signed in as ${who}`;
-      btnLogout.style.display = 'inline-block';
-      if(navSignIn) navSignIn.style.display = 'none';
-      if(navSignUp) navSignUp.style.display = 'none';
+     
 
       // Run the detailed plan/owner check
       await refreshUserPlan();
@@ -471,8 +463,6 @@ const loadImage = (src) => new Promise((res, rej) => {
         Studio.redraw();
       }
     });
-
-    if(btnLogout) btnLogout.onclick = () => auth.signOut();
     
     // 6. GALLERY SAVING
     async function saveToGalleryIfSignedIn(blob, type){
